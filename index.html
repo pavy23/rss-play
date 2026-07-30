@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="RSS">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#05070d">
+    <title>Roguelike Scrolling Shooter</title>
+    <link rel="shortcut icon" href="TemplateData/favicon.ico">
+    <style>
+      * { -webkit-tap-highlight-color: transparent; }
+      html, body {
+        margin: 0; padding: 0; width: 100%; height: 100%;
+        overflow: hidden; background: #05070d;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        color: #cfe0ff;
+        /* iOS Safari에서 페이지 자체가 스크롤/바운스되지 않게 */
+        position: fixed; overscroll-behavior: none; touch-action: none;
+        -webkit-user-select: none; user-select: none;
+      }
+      #unity-container { position: absolute; inset: 0; }
+      #unity-canvas {
+        display: block; width: 100%; height: 100%;
+        background: #05070d; touch-action: none; outline: none;
+      }
+
+      #boot {
+        position: absolute; inset: 0; display: flex; flex-direction: column;
+        align-items: center; justify-content: center; gap: 18px;
+        background: #05070d; z-index: 20; text-align: center; padding: 24px;
+      }
+      #boot h1 {
+        margin: 0; font-size: 15px; font-weight: 600; letter-spacing: .18em;
+        text-transform: uppercase; color: #7fa8ff;
+      }
+      #bar { width: min(280px, 70vw); height: 4px; background: #16202f; border-radius: 2px; overflow: hidden; }
+      #bar > i { display: block; height: 100%; width: 0%; background: linear-gradient(90deg, #3d7bff, #7fd4ff); transition: width .2s; }
+      .dim { color: #64789c; font-size: 12px; line-height: 1.6; margin: 0; }
+
+      /* 세로 모드 안내 — 횡스크롤 슈팅이라 가로가 필수 */
+      #rotate {
+        position: absolute; inset: 0; display: none; z-index: 30;
+        background: #05070d; align-items: center; justify-content: center;
+        flex-direction: column; gap: 16px; text-align: center; padding: 32px;
+      }
+      #rotate svg { width: 54px; height: 54px; stroke: #7fa8ff; fill: none; stroke-width: 1.6; }
+      @media (orientation: portrait) {
+        body.mobile #rotate { display: flex; }
+      }
+
+      #err {
+        position: absolute; left: 0; right: 0; bottom: 0; z-index: 40;
+        display: none; padding: 12px 14px; background: #40121a;
+        color: #ffc9d2; font-size: 11px; font-family: ui-monospace, monospace;
+        white-space: pre-wrap; max-height: 45%; overflow: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="unity-container">
+      <canvas id="unity-canvas" tabindex="-1"></canvas>
+    </div>
+
+    <div id="boot">
+      <h1>Roguelike Scrolling Shooter</h1>
+      <div id="bar"><i></i></div>
+      <p class="dim" id="bootmsg">약 28MB를 내려받습니다 &middot; 와이파이 권장</p>
+    </div>
+
+    <div id="rotate">
+      <svg viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2.5"/><path d="M9 19.5h6"/></svg>
+      <p class="dim">가로로 돌려주세요<br>횡스크롤 슈팅이라 가로 화면이 필요합니다</p>
+    </div>
+
+    <div id="err"></div>
+
+    <script>
+      var canvas = document.querySelector("#unity-canvas");
+      var boot = document.querySelector("#boot");
+      var bar = document.querySelector("#bar > i");
+      var bootmsg = document.querySelector("#bootmsg");
+      var errBox = document.querySelector("#err");
+
+      var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
+        || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+      if (isMobile) document.body.classList.add('mobile');
+
+      // alert()는 브라우저를 멈추게 하므로 화면에 표시한다 — 폰에서 원인을 읽을 수 있게.
+      function showError(msg) {
+        errBox.style.display = 'block';
+        errBox.textContent += msg + "\n";
+      }
+      function unityShowBanner(msg, type) {
+        if (type === 'error') showError(msg);
+      }
+      window.addEventListener('error', function (e) {
+        showError('JS: ' + (e.message || e.type));
+      });
+
+      var buildUrl = "Build";
+      var config = {
+        arguments: [],
+        dataUrl: buildUrl + "/Web.data.unityweb",
+        frameworkUrl: buildUrl + "/Web.framework.js.unityweb",
+        codeUrl: buildUrl + "/Web.wasm.unityweb",
+        streamingAssetsUrl: "StreamingAssets",
+        companyName: "pavy",
+        productName: "Roguelike Scrolling Shooter",
+        productVersion: "1.0",
+        showBanner: unityShowBanner,
+      };
+
+      // 폰은 픽셀 밀도를 1로 낮춘다 — 640x360 픽셀아트라 화질 손실이 없고 프레임이 안정된다.
+      if (isMobile) config.devicePixelRatio = 1;
+
+      function fit() {
+        canvas.style.width = window.innerWidth + 'px';
+        canvas.style.height = window.innerHeight + 'px';
+      }
+      window.addEventListener('resize', fit);
+      window.addEventListener('orientationchange', function () { setTimeout(fit, 250); });
+      fit();
+
+      var script = document.createElement("script");
+      script.src = buildUrl + "/Web.loader.js";
+      script.onload = function () {
+        createUnityInstance(canvas, config, function (progress) {
+          bar.style.width = (100 * progress) + "%";
+          if (progress > 0.92) bootmsg.textContent = "압축 해제 중…";
+        }).then(function (unityInstance) {
+          boot.style.display = "none";
+          window.unityInstance = unityInstance;
+        }).catch(function (message) {
+          bootmsg.textContent = "실행에 실패했습니다";
+          showError(String(message));
+        });
+      };
+      script.onerror = function () {
+        bootmsg.textContent = "로더를 내려받지 못했습니다";
+        showError("Failed to load " + script.src);
+      };
+      document.body.appendChild(script);
+    </script>
+  </body>
+</html>
