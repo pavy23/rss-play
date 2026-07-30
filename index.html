@@ -88,6 +88,44 @@
     <div id="err"></div>
 
     <script>
+      // 오디오 언락. Unity 로더보다 먼저 실행되어야 한다.
+      //
+      // 브라우저는 사용자 제스처 전에 만들어진 AudioContext를 suspended로 둔다. 게다가
+      // iOS Safari는 WebAudio를 기기의 무음 스위치에 종속시킨다 — 벨소리를 꺼 둔
+      // 아이폰에서 웹 게임이 조용한 가장 흔한 이유다.
+      (function () {
+        // iOS 16.4+: 오디오 세션을 미디어 재생으로 승격시켜 무음 스위치를 피한다.
+        try {
+          if (navigator.audioSession) navigator.audioSession.type = 'playback';
+        } catch (e) { /* 지원하지 않는 브라우저는 무시 */ }
+
+        var Native = window.AudioContext || window.webkitAudioContext;
+        if (!Native) return;
+        var created = [];
+        window.__audioContexts = created;   // 진단용
+        var Tracked = class extends Native {
+          constructor() {
+            super(...arguments);
+            created.push(this);
+          }
+        };
+        window.AudioContext = Tracked;
+        if (window.webkitAudioContext) window.webkitAudioContext = Tracked;
+
+        // Unity가 자기 컨텍스트를 언제 깨우는지에 의존하지 않고 직접 resume 한다.
+        function wake() {
+          for (var i = 0; i < created.length; i++) {
+            var ctx = created[i];
+            if (ctx.state === 'suspended' && ctx.resume) ctx.resume();
+          }
+        }
+        ['pointerdown', 'touchend', 'click', 'keydown'].forEach(function (name) {
+          window.addEventListener(name, wake, { passive: true });
+        });
+      })();
+    </script>
+
+    <script>
       var canvas = document.querySelector("#unity-canvas");
       var boot = document.querySelector("#boot");
       var bar = document.querySelector("#bar > i");
