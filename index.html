@@ -149,15 +149,25 @@
       });
 
       var buildUrl = "Build";
+
+      // 캐시 무효화 (2026-08-03). 이 줄이 없으면 배포해도 플레이어는 옛 빌드를 계속
+      // 돌린다 — Unity WebGL 로더는 data/wasm을 **IndexedDB에 캐시**하고, 그 키가
+      // (URL + productVersion)이라 둘 다 고정이면 새 파일을 아예 받지 않는다.
+      // 실제로 여러 번 배포하고도 "여전히 그대로"라는 보고가 나왔고 원인이 이것이었다.
+      //
+      // BUILD_STAMP는 배포할 때마다 갱신한다 (Tools/deploy_web.ps1이 자동으로 바꾼다).
+      // 스탬프가 바뀌면 URL과 productVersion이 함께 바뀌어 캐시 키가 갈린다.
+      var BUILD_STAMP = "20260803-1420";
+      var v = "?v=" + BUILD_STAMP;
       var config = {
         arguments: [],
-        dataUrl: buildUrl + "/Web.data.unityweb",
-        frameworkUrl: buildUrl + "/Web.framework.js.unityweb",
-        codeUrl: buildUrl + "/Web.wasm.unityweb",
+        dataUrl: buildUrl + "/Web.data.unityweb" + v,
+        frameworkUrl: buildUrl + "/Web.framework.js.unityweb" + v,
+        codeUrl: buildUrl + "/Web.wasm.unityweb" + v,
         streamingAssetsUrl: "StreamingAssets",
         companyName: "pavy",
         productName: "Roguelike Scrolling Shooter",
-        productVersion: "1.0",
+        productVersion: BUILD_STAMP,
         showBanner: unityShowBanner,
       };
 
@@ -180,7 +190,7 @@
       fit();
 
       var script = document.createElement("script");
-      script.src = buildUrl + "/Web.loader.js";
+      script.src = buildUrl + "/Web.loader.js" + v;
       script.onload = function () {
         createUnityInstance(canvas, config, function (progress) {
           bar.style.width = (100 * progress) + "%";
