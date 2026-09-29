@@ -1,0 +1,35 @@
+{
+  "kind": "revamp-playtest",
+  "stamp": "20260930-081733-09dc823",
+  "sourceRepository": "pavy23/roguelike-scrolling-shooter",
+  "sourceBranch": "codex/revamp",
+  "sourceCommit": "09dc8238db60791ffc695efe3523e934ccc048b3",
+  "builtAtUtc": "2026-09-29T23:15:20.0663562Z",
+  "unity": "6000.5.3f1",
+  "cli": "1.0.0-beta.11",
+  "coreTestsPassed": 597,
+  "unityEditModeTestsPassed": 715,
+  "browserPlaytestPerformed": false,
+  "files": [
+    {
+      "name": "Web.data.unityweb",
+      "bytes": 18962215,
+      "sha256": "44ab15e5d44dbf2b376e119e80387c31c5091f51eb5e0a0415d4ff559f679015"
+    },
+    {
+      "name": "Web.framework.js.unityweb",
+      "bytes": 88021,
+      "sha256": "d3eda97b8d17ddd16619034b2e9b45d1b97bed9e385a756985c35bccfd13c0ad"
+    },
+    {
+      "name": "Web.loader.js",
+      "bytes": 47866,
+      "sha256": "0995be86c039bac54d55e3157c7083aba3689d4212ee011a0e22054424420196"
+    },
+    {
+      "name": "Web.wasm.unityweb",
+      "bytes": 10752266,
+      "sha256": "d8b6e22098052740ccbb0fd851d1d9812da44c9a3c31e6635a8cd0546c07be44"
+    }
+  ]
+}
