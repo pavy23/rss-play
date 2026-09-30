@@ -1,35 +1,35 @@
 {
   "kind": "revamp-playtest",
-  "stamp": "20260930-081733-09dc823",
+  "stamp": "20260930-093215-f4e143a",
   "sourceRepository": "pavy23/roguelike-scrolling-shooter",
   "sourceBranch": "codex/revamp",
-  "sourceCommit": "09dc8238db60791ffc695efe3523e934ccc048b3",
-  "builtAtUtc": "2026-09-29T23:15:20.0663562Z",
+  "sourceCommit": "f4e143a3452295c29f04f1500c8ff3b4eb322f5b",
+  "builtAtUtc": "2026-09-30T00:32:00.0459301Z",
   "unity": "6000.5.3f1",
   "cli": "1.0.0-beta.11",
   "coreTestsPassed": 597,
-  "unityEditModeTestsPassed": 715,
+  "unityEditModeTestsPassed": 731,
   "browserPlaytestPerformed": false,
   "files": [
     {
       "name": "Web.data.unityweb",
-      "bytes": 18962215,
-      "sha256": "44ab15e5d44dbf2b376e119e80387c31c5091f51eb5e0a0415d4ff559f679015"
+      "bytes": 18959015,
+      "sha256": "f3f29ddaffc1dd82ea31035c4936255b579cdbcf1f940f2fc4177ef27473d63d"
     },
     {
       "name": "Web.framework.js.unityweb",
-      "bytes": 88021,
-      "sha256": "d3eda97b8d17ddd16619034b2e9b45d1b97bed9e385a756985c35bccfd13c0ad"
+      "bytes": 88024,
+      "sha256": "0efb4ec576cea9a572737a6c491a4097d9184616a9b714e0ebf9626e74988b1a"
     },
     {
       "name": "Web.loader.js",
       "bytes": 47866,
-      "sha256": "0995be86c039bac54d55e3157c7083aba3689d4212ee011a0e22054424420196"
+      "sha256": "ff297c0f400c0edb34e67b1857475f86388015dccb51bb6fa8d8fbd43e249524"
     },
     {
       "name": "Web.wasm.unityweb",
-      "bytes": 10752266,
-      "sha256": "d8b6e22098052740ccbb0fd851d1d9812da44c9a3c31e6635a8cd0546c07be44"
+      "bytes": 10750076,
+      "sha256": "6b3db35c5650bdc2803745098cd8ce21b319405fe4a6059035efaa323a2e78f4"
     }
   ]
 }
